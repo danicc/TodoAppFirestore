@@ -1,4 +1,4 @@
 import { AppRegistry } from 'react-native';
-import App from './App';
+import TodoComponent from './components/TodoComponent';
 
-AppRegistry.registerComponent('TodoAppFirestore', () => App);
+AppRegistry.registerComponent('TodoAppFirestore', () => TodoComponent);
