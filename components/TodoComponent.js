@@ -1,13 +1,13 @@
 import React from 'react';
 import {
   FlatList,
-  Text,
   View,
   Image,
   TouchableHighlight,
   TextInput
 } from 'react-native';
 import firebase from 'react-native-firebase';
+import Todo from './Todo';
 
 const addIcon = require('../icons/icons-add.png');
 
@@ -36,8 +36,12 @@ export default class TodoComponent extends React.Component {
     const todos = [];
 
     querySnapshot.forEach(doc => {
+      const { taskName, isCompleted } = doc.data();
       todos.push({
-        taskName: doc.data().taskName
+        key: doc.id,
+        doc,
+        taskName,
+        isCompleted
       });
     });
 
@@ -50,7 +54,8 @@ export default class TodoComponent extends React.Component {
   addTodo = async () => {
     try {
       await this.ref.add({
-        taskName: this.state.newTaskName
+        taskName: this.state.newTaskName,
+        isCompleted: false
       });
     } catch (exception) {
       console.log(exception);
@@ -98,6 +103,7 @@ export default class TodoComponent extends React.Component {
           <TouchableHighlight
             style={{ marginRight: 10 }}
             underlayColor="tomato"
+            disabled={!this.state.newTaskName}
             onPress={() => this.addTodo()}
           >
             <Image style={{ width: 35, height: 35 }} source={addIcon} />
@@ -105,18 +111,7 @@ export default class TodoComponent extends React.Component {
         </View>
         <FlatList
           data={this.state.todoTasks}
-          renderItem={({ item }) => (
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: 'bold',
-                margin: 40
-              }}
-            >
-              {item.taskName}
-            </Text>
-          )}
-          keyExtractor={item => item.taskName}
+          renderItem={({ item }) => <Todo {...item} />}
         />
       </View>
     );
